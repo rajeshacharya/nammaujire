@@ -7,6 +7,11 @@ server*.log
 start-django-8001.cmd
 staticfiles/
 .env
+.render-tools/
+.chrome-render-profile/
+.playwright-cli/
+node_modules/
+package-lock.json
 db.sqlite3-journal
 db.sqlite3-wal
 db.sqlite3-shm
