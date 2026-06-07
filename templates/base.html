@@ -1,0 +1,83 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Namma Ujire{% endblock %}</title>
+    
+    <!-- Meta tags for SEO -->
+    <meta name="description" content="Namma Ujire - Your centralized platform to find trusted local services, daily workers, and explore the town of Ujire.">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+            <a href="{% url 'home' %}" class="nav-brand" style="font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px;">
+                <span style="color: var(--primary);">Namma</span>Ujire<span style="color: var(--secondary);">.</span>
+            </a>
+            <div class="nav-links">
+                <a href="{% url 'home' %}" class="nav-link">Home</a>
+                <a href="{% url 'ask_ujire' %}" class="nav-link">Ask Ujire</a>
+                <a href="{% url 'daily_hub' %}" class="nav-link">Daily Ujire</a>
+                <a href="{% url 'locations:explore_index' %}" class="nav-link">Explore</a>
+                <a href="{% url 'services_list' %}" class="nav-link">Services</a>
+                
+                {% if request.user.is_authenticated %}
+                <a href="{% url 'dashboard' %}" class="btn btn-primary"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+                <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline">Logout</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}" class="nav-link">Login</a>
+                <a href="{% url 'register' %}" class="btn btn-primary">Sign Up</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Alerts/Messages -->
+        {% if messages %}
+            <div class="container" style="padding-top: 1rem; padding-bottom: 0;">
+                {% for message in messages %}
+                    <div class="glass-card mb-4" style="padding: 1rem; background: {% if message.tags == 'error' %}#fee2e2{% elif message.tags == 'success' %}#d1fae5{% else %}#e0e7ff{% endif %}; border-left: 4px solid {% if message.tags == 'error' %}var(--danger){% elif message.tags == 'success' %}var(--success){% else %}var(--primary){% endif %};">
+                        <p style="margin:0; color: var(--text-main); font-weight: 500;">
+                            {% if message.tags == 'error' %}<i class="fa-solid fa-circle-exclamation" style="color: var(--danger);"></i>
+                            {% elif message.tags == 'success' %}<i class="fa-solid fa-circle-check" style="color: var(--success);"></i>
+                            {% endif %}
+                            {{ message }}
+                        </p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer style="background: white; padding: 3rem 5%; margin-top: 4rem; border-top: 1px solid var(--card-border); text-align: center;">
+        <h3 style="color: var(--primary); margin-bottom: 1rem;"><i class="fa-solid fa-leaf"></i> Namma Ujire</h3>
+        <p class="text-muted">Connecting our community with trusted services.</p>
+        <div style="margin-top: 1.5rem; display: flex; justify-content: center; gap: 1rem;">
+            <a href="#" class="nav-link"><i class="fa-brands fa-facebook fa-lg"></i></a>
+            <a href="#" class="nav-link"><i class="fa-brands fa-instagram fa-lg"></i></a>
+            <a href="#" class="nav-link"><i class="fa-brands fa-whatsapp fa-lg"></i></a>
+        </div>
+        <p class="text-muted" style="margin-top: 2rem; font-size: 0.875rem;">&copy; {% now "Y" %} Namma Ujire. All rights reserved.</p>
+    </footer>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

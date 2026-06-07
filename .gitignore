@@ -1,0 +1,12 @@
+.venv/
+.idea/
+__pycache__/
+*.py[cod]
+*.log
+server*.log
+start-django-8001.cmd
+staticfiles/
+.env
+db.sqlite3-journal
+db.sqlite3-wal
+db.sqlite3-shm

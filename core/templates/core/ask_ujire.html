@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block title %}Ask Ujire | Namma Ujire{% endblock %}
+
+{% block content %}
+<section class="ask-hero">
+    <div class="ask-shell">
+        <span class="section-kicker"><i class="fa-solid fa-wand-magic-sparkles"></i> Local action engine</span>
+        <h1>Ask Ujire</h1>
+        <p>Type what you need in town. Get direct actions from services, local updates, places, and emergency contacts.</p>
+
+        <form method="GET" action="{% url 'ask_ujire' %}" class="ask-form">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="search" name="q" value="{{ query }}" placeholder="Try: plumber near me, bus update, rain alert, job, doctor emergency">
+            <button type="submit" class="btn btn-primary">Ask</button>
+        </form>
+
+        <div class="ask-chips">
+            {% for item in quick_asks %}
+            <a href="{% url 'ask_ujire' %}?q={{ item|urlencode }}">{{ item }}</a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="container ask-results">
+    {% if query %}
+    <div class="section-heading">
+        <div>
+            <h2>Results for "{{ query }}"</h2>
+            <p class="text-muted">Actions first. Browsing second.</p>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if not has_results %}
+    <div class="empty-state">
+        <i class="fa-solid fa-circle-question"></i>
+        <h3>No direct match yet</h3>
+        <p>Try words like auto, plumber, bus, rain, job, temple, doctor, school, or market.</p>
+        <a href="{% url 'submit_local_update' %}" class="btn btn-primary">Ask Community</a>
+    </div>
+    {% endif %}
+
+    {% if contacts %}
+    <div class="answer-section answer-emergency">
+        <div class="answer-title">
+            <i class="fa-solid fa-phone-volume"></i>
+            <h2>Call First</h2>
+        </div>
+        <div class="answer-grid compact-grid">
+            {% for contact in contacts %}
+            <a href="tel:{{ contact.phone }}" class="answer-card">
+                <span class="answer-icon"><i class="{{ contact.icon_class }}"></i></span>
+                <strong>{{ contact.name }}</strong>
+                <p>{{ contact.get_category_display }}{% if contact.available_24x7 %} · 24x7{% endif %}</p>
+                <b>{{ contact.phone }}</b>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if services %}
+    <div class="answer-section">
+        <div class="answer-title">
+            <i class="fa-solid fa-screwdriver-wrench"></i>
+            <h2>People Who Can Help</h2>
+        </div>
+        <div class="answer-grid">
+            {% for service in services %}
+            <article class="answer-card">
+                <span class="answer-icon">
+                    {% if service.service_type == 'AUTO' %}<i class="fa-solid fa-taxi"></i>
+                    {% elif service.service_type == 'PLUMBER' %}<i class="fa-solid fa-wrench"></i>
+                    {% elif service.service_type == 'ELECTRICIAN' %}<i class="fa-solid fa-bolt"></i>
+                    {% else %}<i class="fa-solid fa-scissors"></i>{% endif %}
+                </span>
+                <strong>{{ service.name }}</strong>
+                <p>{{ service.get_service_type_display }} · {{ service.location }}</p>
+                <div class="answer-actions">
+                    <a href="tel:{{ service.phone }}" class="btn btn-outline"><i class="fa-solid fa-phone"></i> Call</a>
+                    <a href="https://wa.me/91{{ service.phone }}" target="_blank" class="btn btn-outline"><i class="fa-brands fa-whatsapp"></i></a>
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'book_service' service.id %}" class="btn btn-primary">Book</a>
+                    {% else %}
+                    <a href="{% url 'login' %}?next={% url 'book_service' service.id %}" class="btn btn-primary">Login</a>
+                    {% endif %}
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if updates %}
+    <div class="answer-section">
+        <div class="answer-title">
+            <i class="fa-solid fa-bell"></i>
+            <h2>Local Updates</h2>
+        </div>
+        <div class="answer-list">
+            {% for update in updates %}
+            <a href="{% url 'daily_hub' %}#update-{{ update.id }}" class="answer-row">
+                <span class="answer-icon"><i class="{{ update.icon_class }}"></i></span>
+                <span>
+                    <strong>{{ update.title }}</strong>
+                    <small>{{ update.get_category_display }}{% if update.location %} · {{ update.location }}{% endif %}</small>
+                </span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if places %}
+    <div class="answer-section">
+        <div class="answer-title">
+            <i class="fa-solid fa-map-location-dot"></i>
+            <h2>Places Around Ujire</h2>
+        </div>
+        <div class="answer-grid">
+            {% for place in places %}
+            <a href="{% url 'locations:place_detail' place.id %}" class="answer-card place-answer">
+                {% if place.image %}
+                <img src="{{ place.image.url }}" alt="{{ place.name }}">
+                {% endif %}
+                <strong>{{ place.name }}</strong>
+                <p>{{ place.category.name }} · <i class="fa-solid fa-star"></i> {{ place.rating }}</p>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Request OTP</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        input[type="email"] { padding: 8px; width: 250px; }
+        button { padding: 8px 12px; margin-left: 10px; }
+        .message { margin-top: 10px; color: green; }
+        .error { margin-top: 10px; color: red; }
+    </style>
+</head>
+<body>
+    <h2>Check Booking History</h2>
+    <p>Enter your email address to receive a one-time password (OTP).</p>
+    <form method="post">
+        {% csrf_token %}
+        <input type="email" name="email" placeholder="Enter your email" required>
+        <button type="submit">Send OTP</button>
+    </form>
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+    {% if message %}
+        <p class="message">{{ message }}</p>
+    {% endif %}
+</body>
+</html>

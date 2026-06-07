@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container" style="margin-top: 2rem; max-width: 900px;">
+    <!-- Breadcrumb -->
+    <div style="margin-bottom: 1.5rem;">
+        <a href="{% url 'locations:explore_index' %}" style="color: var(--text-muted); text-decoration: none;"><i class="fa-solid fa-arrow-left"></i> Back to Explore</a>
+    </div>
+
+    <!-- Hero Image -->
+    <div class="animate-fade-in-up" style="width: 100%; height: 400px; border-radius: var(--border-radius); overflow: hidden; margin-bottom: 2rem; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); background: linear-gradient(135deg, var(--card-bg), var(--bg-color)); display: flex; align-items: center; justify-content: center; font-size: 5rem; color: var(--primary);">
+        {% if place.image %}
+            <img src="{{ place.image.url }}" alt="{{ place.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+        {% else %}
+            <i class="{{ place.category.icon }}"></i>
+        {% endif %}
+    </div>
+
+    <!-- Content -->
+    <div class="glass-card animate-fade-in-up" style="padding: 2.5rem;">
+        <div class="flex justify-between" style="align-items: flex-start; margin-bottom: 1.5rem; border-bottom: 1px solid var(--card-border); padding-bottom: 1.5rem;">
+            <div>
+                <span style="display: inline-block; padding: 0.25rem 0.75rem; background: #eef2ff; color: var(--primary); border-radius: 2rem; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.75rem;"><i class="{{ place.category.icon }}"></i> {{ place.category.name }}</span>
+                <h1 style="margin: 0; font-size: 2.5rem; color: var(--text-color);">{{ place.name }}</h1>
+            </div>
+            <div style="text-align: right;">
+                <div style="font-size: 2rem; font-weight: bold; color: #f59e0b;">{{ place.rating }}</div>
+                <div style="color: var(--text-muted); font-size: 0.9rem;">{{ place.reviews_count }} Reviews</div>
+            </div>
+        </div>
+
+        <h3 style="margin-bottom: 1rem;">About</h3>
+        <p style="font-size: 1.1rem; line-height: 1.8; color: var(--text-color); margin-bottom: 2rem;">
+            {{ place.description }}
+        </p>
+
+        <div style="background: var(--bg-color); padding: 1.5rem; border-radius: var(--border-radius); border: 1px solid var(--card-border);">
+            <h4 style="margin-top: 0; margin-bottom: 1rem;"><i class="fa-solid fa-map-location-dot" style="color: var(--primary);"></i> Location & Directions</h4>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Located in Ujire, Dakshina Kannada.</p>
+            <a href="#" class="btn btn-primary"><i class="fa-solid fa-directions"></i> Get Directions (Maps)</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

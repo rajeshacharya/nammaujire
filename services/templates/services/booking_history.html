@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Booking History</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        table { border-collapse: collapse; margin-top: 20px; width: 100%; }
+        th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+    </style>
+</head>
+<body>
+    {% load tz %}
+    <h2>Booking History for {{ email }}</h2>
+
+    {% if bookings %}
+        <table>
+            <tr>
+                <th>Provider</th>
+                <th>Booking Time</th>
+                <th>Message</th>
+                <th>Requested On</th>
+            </tr>
+            {% for booking in bookings %}
+            <tr>
+                <td>{{ booking.provider }}</td>
+                <td>{{ booking.booking_datetime|localtime }}</td>
+                <td>{{ booking.message }}</td>
+                <td>{{ booking.creation_datetime|localtime }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No bookings found for <strong>{{ email }}</strong>.</p>
+    {% endif %}
+</body>
+</html>

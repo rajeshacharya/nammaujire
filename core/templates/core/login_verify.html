@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container" style="max-width: 500px; margin-top: 4rem;">
+    <div class="glass-card animate-fade-in-up">
+        <h2 class="text-center mb-4" style="color: var(--primary);">Verify OTP</h2>
+        <p class="text-center text-muted mb-6">We've sent a 6-digit code to <strong>+91 {{ phone }}</strong></p>
+        
+        {% if mock_otp %}
+        <div style="background: #eef2ff; border: 1px dashed var(--primary); padding: 1rem; border-radius: var(--border-radius); text-align: center; margin-bottom: 1.5rem;">
+            <span class="text-muted" style="font-size: 0.875rem; display: block; margin-bottom: 0.2rem;">[DEVELOPMENT MODE]</span>
+            <span style="font-size: 1.25rem; font-weight: bold; color: var(--primary);">Your Mock OTP is: {{ mock_otp }}</span>
+        </div>
+        {% endif %}
+        
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label text-center" style="display: block;">Enter 6-Digit Code</label>
+                <input type="text" name="otp" class="form-control" required placeholder="● ● ● ● ● ●" pattern="[0-9]{6}" maxlength="6" style="text-align: center; font-size: 1.5rem; letter-spacing: 0.5rem; font-weight: bold;">
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Verify & Login <i class="fa-solid fa-check-circle"></i></button>
+        </form>
+        
+        <div class="text-center mt-6 text-muted">
+            Didn't receive the code? <a href="{% url 'login' %}" style="font-weight: 600;">Change number</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

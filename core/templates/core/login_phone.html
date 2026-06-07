@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container" style="max-width: 500px; margin-top: 4rem;">
+    <div class="glass-card animate-fade-in-up">
+        <h2 class="text-center mb-6" style="color: var(--primary);">Login / Register</h2>
+        <p class="text-center text-muted mb-4">Enter your mobile number to receive a One-Time Password (OTP) securely.</p>
+        
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label">Mobile Number</label>
+                <div style="display: flex; gap: 0.5rem;">
+                    <div class="form-control" style="width: auto; background: #f1f5f9; color: var(--text-muted); cursor: not-allowed;">+91</div>
+                    <input type="tel" name="phone" class="form-control" required placeholder="Enter 10-digit number" pattern="[0-9]{10}" maxlength="10">
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Send OTP <i class="fa-solid fa-paper-plane"></i></button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="hero-section" style="padding: 4rem 1rem; text-align: center; background: linear-gradient(135deg, var(--bg-color), var(--card-bg)); border-bottom: 1px solid var(--card-border); margin-bottom: 3rem;">
+    <h1 class="animate-fade-in-up" style="font-size: 3rem; margin-bottom: 1rem; color: var(--primary);">Explore Ujire</h1>
+    <p class="animate-fade-in-up" style="color: var(--text-muted); font-size: 1.25rem; max-width: 600px; margin: 0 auto;">Discover the rich heritage, majestic temples, beautiful nature, and premier educational hubs of Ujire.</p>
+</div>
+
+<div class="container">
+    <!-- Categories Filter -->
+    <div class="flex justify-center flex-wrap gap-4 mb-8">
+        <a href="{% url 'locations:explore_index' %}" class="btn {% if not selected_category %}btn-primary{% else %}btn-outline{% endif %}" style="border-radius: 2rem;">
+            All Places
+        </a>
+        {% for cat in categories %}
+        <a href="{% url 'locations:explore_index' %}?category={{ cat.slug }}" class="btn {% if selected_category == cat.slug %}btn-primary{% else %}btn-outline{% endif %}" style="border-radius: 2rem;">
+            <i class="{{ cat.icon }}"></i> {{ cat.name }}
+        </a>
+        {% endfor %}
+    </div>
+
+    <!-- Places Grid -->
+    <div class="grid grid-cols-3 gap-6">
+        {% for place in places %}
+        <a href="{% url 'locations:place_detail' place.id %}" class="glass-card animate-fade-in-up" style="padding: 0; overflow: hidden; text-decoration: none; color: inherit; transition: transform 0.3s ease, box-shadow 0.3s ease; display: block;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 20px rgba(0,0,0,0.1)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 6px -1px rgba(0,0,0,0.05)';">
+            <div style="height: 200px; width: 100%; overflow: hidden; background: linear-gradient(135deg, var(--card-bg), var(--bg-color)); display: flex; align-items: center; justify-content: center; font-size: 3rem; color: var(--primary);">
+                {% if place.image %}
+                    <img src="{{ place.image.url }}" alt="{{ place.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                {% else %}
+                    <i class="{{ place.category.icon }}"></i>
+                {% endif %}
+            </div>
+            <div style="padding: 1.5rem;">
+                <div class="flex justify-between" style="margin-bottom: 0.5rem; align-items: center;">
+                    <span style="font-size: 0.8rem; font-weight: 600; color: var(--primary); text-transform: uppercase; letter-spacing: 0.05em;">{{ place.category.name }}</span>
+                    <span style="color: #f59e0b; font-weight: 600; font-size: 0.9rem;"><i class="fa-solid fa-star"></i> {{ place.rating }} <span style="color: var(--text-muted); font-weight: normal; font-size: 0.8rem;">({{ place.reviews_count }})</span></span>
+                </div>
+                <h3 style="margin: 0 0 0.5rem 0; font-size: 1.25rem;">{{ place.name }}</h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0; line-height: 1.5;">{{ place.short_description }}</p>
+            </div>
+        </a>
+        {% empty %}
+        <div style="grid-column: span 3; text-align: center; padding: 4rem; color: var(--text-muted);">
+            <h3>No places found in this category.</h3>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

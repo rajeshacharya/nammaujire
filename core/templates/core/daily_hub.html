@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}Daily Ujire | Namma Ujire{% endblock %}
+
+{% block content %}
+<section class="daily-hero">
+    <div class="daily-hero-content">
+        <div>
+            <span class="section-kicker"><i class="fa-solid fa-location-dot"></i> Ujire today</span>
+            <h1>Daily Ujire</h1>
+            <p>Local alerts, notices, jobs, transport updates, events, and useful contacts in one place.</p>
+        </div>
+        <div class="daily-hero-actions">
+            <a href="{% url 'submit_local_update' %}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Share Update</a>
+            <a href="#emergency" class="btn btn-outline"><i class="fa-solid fa-phone-volume"></i> Emergency</a>
+        </div>
+    </div>
+</section>
+
+{% if urgent_updates %}
+<section class="container daily-strip">
+    {% for update in urgent_updates %}
+    <a href="#update-{{ update.id }}" class="urgent-item">
+        <i class="{{ update.icon_class }}"></i>
+        <span>{{ update.title }}</span>
+    </a>
+    {% endfor %}
+</section>
+{% endif %}
+
+<section class="container">
+    <div class="category-scroll">
+        <a href="{% url 'daily_hub' %}" class="chip {% if not selected_category %}chip-active{% endif %}">
+            <i class="fa-solid fa-layer-group"></i> All
+        </a>
+        {% for cat in categories %}
+        <a href="{% url 'daily_hub' %}?category={{ cat.value }}" class="chip {% if selected_category == cat.value %}chip-active{% endif %}">
+            <i class="{{ cat.icon }}"></i> {{ cat.label }}
+        </a>
+        {% endfor %}
+    </div>
+
+    <div class="daily-layout">
+        <div class="updates-column">
+            <div class="section-heading">
+                <div>
+                    <h2>Latest Local Updates</h2>
+                    <p class="text-muted">Reviewed community information for Ujire and nearby areas.</p>
+                </div>
+            </div>
+
+            {% for update in updates %}
+            <article id="update-{{ update.id }}" class="update-card {% if update.is_urgent %}update-urgent{% endif %}">
+                <div class="update-icon"><i class="{{ update.icon_class }}"></i></div>
+                <div class="update-body">
+                    <div class="update-meta">
+                        <span>{{ update.get_category_display }}</span>
+                        {% if update.generated_from %}<span>Auto scheduled</span>{% endif %}
+                        {% if update.is_urgent %}<strong>Urgent</strong>{% endif %}
+                        {% if update.event_datetime %}<span>{{ update.event_datetime|date:"M d, h:i A" }}</span>{% endif %}
+                    </div>
+                    <h3>{{ update.title }}</h3>
+                    <p>{{ update.description }}</p>
+                    <div class="update-foot">
+                        {% if update.location %}
+                        <span><i class="fa-solid fa-location-dot"></i> {{ update.location }}</span>
+                        {% endif %}
+                        {% if update.contact_phone %}
+                        <a href="tel:{{ update.contact_phone }}"><i class="fa-solid fa-phone"></i> {{ update.contact_phone }}</a>
+                        {% endif %}
+                        {% if update.valid_until %}
+                        <span><i class="fa-solid fa-calendar-check"></i> Till {{ update.valid_until|date:"M d" }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+            {% empty %}
+            <div class="empty-state">
+                <i class="fa-solid fa-circle-info"></i>
+                <h3>No updates in this category today</h3>
+                <p>Check all categories or share a verified local update.</p>
+                <a href="{% url 'daily_hub' %}" class="btn btn-outline">View All</a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <aside id="emergency" class="emergency-panel">
+            <div class="section-heading compact">
+                <div>
+                    <h2>Emergency Contacts</h2>
+                    <p class="text-muted">Tap to call.</p>
+                </div>
+            </div>
+
+            {% for contact in emergency_contacts %}
+            <a href="tel:{{ contact.phone }}" class="contact-row">
+                <div class="contact-icon"><i class="{{ contact.icon_class }}"></i></div>
+                <div>
+                    <h3>{{ contact.name }}</h3>
+                    <p>{{ contact.get_category_display }}{% if contact.available_24x7 %} · 24x7{% endif %}</p>
+                    <strong>{{ contact.phone }}</strong>
+                    {% if contact.notes %}<small>{{ contact.notes }}</small>{% endif %}
+                </div>
+            </a>
+            {% empty %}
+            <p class="text-muted">Emergency contacts will appear here after admin review.</p>
+            {% endfor %}
+        </aside>
+    </div>
+</section>
+{% endblock %}

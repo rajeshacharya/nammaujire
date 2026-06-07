@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container animate-fade-in-up" style="margin-top: 2rem;">
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h2>Dashboard</h2>
+            <p class="text-muted">Welcome back, {{ request.user.username }}!</p>
+        </div>
+        
+        {% if is_provider %}
+            <div class="glass-card flex items-center gap-4" style="padding: 1rem 2rem;">
+                <div>
+                    <div style="font-size: 0.875rem; color: var(--text-muted);">Status</div>
+                    <div style="font-weight: 600;">
+                        {% if provider.is_approved %}
+                            <span class="text-success"><i class="fa-solid fa-check-circle"></i> Approved</span>
+                        {% else %}
+                            <span class="text-warning"><i class="fa-solid fa-clock"></i> Pending Approval</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="glass-card">
+        <h3 class="mb-4">{% if is_provider %}Incoming Booking Requests{% else %}Your Bookings{% endif %}</h3>
+        
+        {% if bookings %}
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; text-align: left; border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid var(--card-border);">
+                            <th style="padding: 1rem;">Date</th>
+                            <th style="padding: 1rem;">{% if is_provider %}Customer{% else %}Service Provider{% endif %}</th>
+                            <th style="padding: 1rem;">Contact</th>
+                            <th style="padding: 1rem;">Status</th>
+                            {% if is_provider %}<th style="padding: 1rem;">Actions</th>{% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in bookings %}
+                        <tr style="border-bottom: 1px solid var(--card-border);">
+                            <td style="padding: 1rem;">{{ booking.creation_datetime|date:"M d, Y h:i A" }}</td>
+                            <td style="padding: 1rem; font-weight: 500;">
+                                {% if is_provider %}{{ booking.name }}{% else %}{{ booking.provider.name }} <br><small class="text-muted">{{ booking.provider.get_service_type_display }}</small>{% endif %}
+                            </td>
+                            <td style="padding: 1rem;">
+                                <div><i class="fa-solid fa-phone" style="color: var(--primary);"></i> {{ booking.phone }}</div>
+                                {% if is_provider and booking.email %}
+                                    <div style="font-size: 0.875rem; color: var(--text-muted);">{{ booking.email }}</div>
+                                {% endif %}
+                            </td>
+                            <td style="padding: 1rem;">
+                                <span class="badge {% if booking.status == 'PENDING' %}badge-warning{% elif booking.status == 'ACCEPTED' %}badge-success{% elif booking.status == 'COMPLETED' %}badge-primary{% else %}badge-danger{% endif %}" 
+                                      style="background: {% if booking.status == 'PENDING' %}#fef3c7{% elif booking.status == 'ACCEPTED' %}#d1fae5{% elif booking.status == 'COMPLETED' %}#e0e7ff{% else %}#fee2e2{% endif %};
+                                             color: {% if booking.status == 'PENDING' %}#d97706{% elif booking.status == 'ACCEPTED' %}#059669{% elif booking.status == 'COMPLETED' %}#4f46e5{% else %}#dc2626{% endif %};">
+                                    {{ booking.status }}
+                                </span>
+                            </td>
+                            {% if is_provider %}
+                            <td style="padding: 1rem; display: flex; gap: 0.5rem;">
+                                {% if booking.status == 'PENDING' %}
+                                    <a href="{% url 'update_booking_status' booking.id 'ACCEPTED' %}" class="btn btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.875rem;">Accept</a>
+                                    <a href="{% url 'update_booking_status' booking.id 'REJECTED' %}" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.875rem; color: var(--danger) !important; border-color: var(--danger);">Reject</a>
+                                {% elif booking.status == 'ACCEPTED' %}
+                                    <a href="{% url 'update_booking_status' booking.id 'COMPLETED' %}" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.875rem;"><i class="fa-solid fa-check"></i> Complete</a>
+                                {% endif %}
+                                <a href="https://wa.me/91{{ booking.phone }}?text=Hi%20{{ booking.name }},%20I%20am%20calling%20regarding%20your%20booking%20on%20Namma%20Ujire." target="_blank" class="btn" style="background: #25D366; color: white; padding: 0.4rem 0.8rem;"><i class="fa-brands fa-whatsapp"></i> Chat</a>
+                            </td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center" style="padding: 3rem 0; color: var(--text-muted);">
+                <i class="fa-solid fa-inbox" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                <p>No bookings found.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

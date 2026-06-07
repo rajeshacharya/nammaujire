@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Share Local Update | Namma Ujire{% endblock %}
+
+{% block content %}
+<div class="container form-page">
+    <div class="form-shell">
+        <div>
+            <span class="section-kicker"><i class="fa-solid fa-circle-check"></i> Community verified</span>
+            <h1>Share a Local Update</h1>
+            <p class="text-muted">Post useful information for Ujire villagers. Admins review every update before it goes live.</p>
+        </div>
+
+        <form method="POST" class="glass-card local-update-form">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="form-errors">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            <div class="form-group">
+                <label class="form-label" for="{{ form.category.id_for_label }}">Category</label>
+                {{ form.category }}
+                {{ form.category.errors }}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="{{ form.title.id_for_label }}">Title</label>
+                {{ form.title }}
+                {{ form.title.errors }}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="{{ form.description.id_for_label }}">Details</label>
+                {{ form.description }}
+                {{ form.description.errors }}
+            </div>
+
+            <div class="grid grid-cols-2">
+                <div class="form-group">
+                    <label class="form-label" for="{{ form.location.id_for_label }}">Location</label>
+                    {{ form.location }}
+                    {{ form.location.errors }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="{{ form.event_datetime.id_for_label }}">Date / Time</label>
+                    {{ form.event_datetime }}
+                    {{ form.event_datetime.errors }}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2">
+                <div class="form-group">
+                    <label class="form-label" for="{{ form.contact_name.id_for_label }}">Contact Name</label>
+                    {{ form.contact_name }}
+                    {{ form.contact_name.errors }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="{{ form.contact_phone.id_for_label }}">Contact Phone</label>
+                    {{ form.contact_phone }}
+                    {{ form.contact_phone.errors }}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="{{ form.valid_until.id_for_label }}">Useful Until</label>
+                {{ form.valid_until }}
+                {{ form.valid_until.errors }}
+            </div>
+
+            <div class="form-actions">
+                <a href="{% url 'daily_hub' %}" class="btn btn-outline">Cancel</a>
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Send for Review</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

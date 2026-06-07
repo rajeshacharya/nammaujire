@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="hero animate-fade-in-up">
+    <h1>Welcome to Namma Ujire</h1>
+    <p>Your centralized platform to solve daily local needs, connect with trusted workers, and stay updated with Ujire.</p>
+    
+    <form action="{% url 'ask_ujire' %}" method="GET" class="home-ask-form">
+        <input type="search" name="q" class="form-control" placeholder="Ask: plumber, bus update, rain alert, job, doctor emergency">
+        <button class="btn btn-primary" type="submit"><i class="fa-solid fa-wand-magic-sparkles"></i> Ask Ujire</button>
+    </form>
+</div>
+
+<div class="container animate-fade-in-up" style="animation-delay: 0.1s;">
+    <div class="home-daily-panel">
+        <div class="section-heading">
+            <div>
+                <span class="section-kicker"><i class="fa-solid fa-bell"></i> Today in town</span>
+                <h2>Useful Local Updates</h2>
+                <p class="text-muted">Transport, panchayat notices, temple events, jobs, health camps, rain alerts, and emergency contacts.</p>
+            </div>
+            <a href="{% url 'daily_hub' %}" class="btn btn-primary">Open Daily Ujire <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+        <div class="daily-preview-grid">
+            {% for update in daily_highlights %}
+            <a href="{% url 'daily_hub' %}#update-{{ update.id }}" class="daily-preview-item">
+                <i class="{{ update.icon_class }}"></i>
+                <div>
+                    <span>{{ update.get_category_display }}</span>
+                    <strong>{{ update.title }}</strong>
+                </div>
+            </a>
+            {% empty %}
+            <a href="{% url 'daily_hub' %}" class="daily-preview-item">
+                <i class="fa-solid fa-circle-info"></i>
+                <div>
+                    <span>Daily Ujire</span>
+                    <strong>Local updates will appear here after review.</strong>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="container animate-fade-in-up" style="animation-delay: 0.2s;">
+    <h2 class="text-center mb-6">Explore Our Platform</h2>
+    
+    <div class="grid grid-cols-3">
+        <!-- Ask Ujire Card -->
+        <a href="{% url 'ask_ujire' %}" class="glass-card text-center" style="color: inherit;">
+            <div style="font-size: 3rem; color: var(--secondary); margin-bottom: 1rem;">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+            </div>
+            <h3>Ask Ujire</h3>
+            <p class="text-muted mt-2">Type a local problem and get the right action: call, book, check alert, or find a place.</p>
+            <div class="mt-4" style="font-weight: 600; color: var(--secondary);">Try It <i class="fa-solid fa-arrow-right"></i></div>
+        </a>
+
+        <!-- Daily Ujire Card -->
+        <a href="{% url 'daily_hub' %}" class="glass-card text-center" style="color: inherit;">
+            <div style="font-size: 3rem; color: var(--danger); margin-bottom: 1rem;">
+                <i class="fa-solid fa-bell"></i>
+            </div>
+            <h3>Daily Ujire</h3>
+            <p class="text-muted mt-2">Check local announcements, bus updates, emergency contacts, jobs, and community alerts.</p>
+            <div class="mt-4" style="font-weight: 600; color: var(--danger);">See Today <i class="fa-solid fa-arrow-right"></i></div>
+        </a>
+
+        <!-- Service Card -->
+        <a href="{% url 'services_list' %}" class="glass-card text-center" style="color: inherit;">
+            <div style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem;">
+                <i class="fa-solid fa-tools"></i>
+            </div>
+            <h3>Book a Service</h3>
+            <p class="text-muted mt-2">Find reliable plumbers, electricians, barbers, and auto drivers in Ujire.</p>
+            <div class="mt-4 text-primary" style="font-weight: 600; color: var(--primary);">Explore Services <i class="fa-solid fa-arrow-right"></i></div>
+        </a>
+
+        <!-- Ads Card -->
+        <a href="#" class="glass-card text-center" style="color: inherit;">
+            <div style="font-size: 3rem; color: var(--warning); margin-bottom: 1rem;">
+                <i class="fa-solid fa-bullhorn"></i>
+            </div>
+            <h3>Local Offers</h3>
+            <p class="text-muted mt-2">Discover the latest advertisements and special offers from local businesses.</p>
+            <div class="mt-4" style="font-weight: 600; color: var(--warning);">View Ads <i class="fa-solid fa-arrow-right"></i></div>
+        </a>
+
+        <!-- Explore Ujire Card -->
+        <a href="{% url 'locations:explore_index' %}" class="glass-card text-center" style="color: inherit;">
+            <div style="font-size: 3rem; color: var(--secondary); margin-bottom: 1rem;">
+                <i class="fa-solid fa-map-location-dot"></i>
+            </div>
+            <h3>Explore Ujire</h3>
+            <p class="text-muted mt-2">Discover tourist spots, famous temples, and educational hubs.</p>
+            <div class="mt-4" style="font-weight: 600; color: var(--secondary);">Discover <i class="fa-solid fa-arrow-right"></i></div>
+        </a>
+    </div>
+</div>
+
+<div class="container mt-6">
+    <div class="glass-card flex items-center justify-between" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none;">
+        <div>
+            <h2 style="color: white;">Are you a Service Provider?</h2>
+            <p style="opacity: 0.9;">Join Namma Ujire today and reach more customers in your town.</p>
+        </div>
+        <a href="{% url 'register' %}?role=provider" class="btn" style="background: white; color: var(--primary) !important;">Register Now</a>
+    </div>
+</div>
+{% endblock %}

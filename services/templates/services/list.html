@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container animate-fade-in-up">
+    <div class="text-center mb-6">
+        <h2 style="color: var(--primary);">Ujire Service Providers</h2>
+        <p class="text-muted">Find and book verified daily workers in our town.</p>
+    </div>
+
+    <div class="grid grid-cols-3">
+        {% for service in services %}
+        <div class="glass-card">
+            <div class="flex items-center justify-between mb-4">
+                <div style="font-size: 2rem; color: var(--primary);">
+                    {% if service.service_type == 'AUTO' %}<i class="fa-solid fa-taxi"></i>
+                    {% elif service.service_type == 'PLUMBER' %}<i class="fa-solid fa-wrench"></i>
+                    {% elif service.service_type == 'ELECTRICIAN' %}<i class="fa-solid fa-bolt"></i>
+                    {% else %}<i class="fa-solid fa-scissors"></i>{% endif %}
+                </div>
+                <div>
+                    {% if service.is_available %}
+                        <span class="badge badge-success" style="background: #d1fae5; color: #059669;"><span class="status-dot status-available"></span> Available</span>
+                    {% else %}
+                        <span class="badge badge-danger" style="background: #fee2e2; color: #dc2626;"><span class="status-dot status-busy"></span> Busy</span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <h3 style="margin-bottom: 0.2rem;">{{ service.name }}</h3>
+            <p class="text-secondary" style="font-weight: 500; font-size: 0.875rem;">{{ service.get_service_type_display }}</p>
+            
+            <div class="mt-4 text-muted" style="font-size: 0.875rem;">
+                <div class="mb-2"><i class="fa-solid fa-location-dot" style="width: 20px;"></i> {{ service.location }}</div>
+                <div class="mb-2"><i class="fa-solid fa-phone" style="width: 20px;"></i> +91 {{ service.phone }}</div>
+            </div>
+            
+            <div class="mt-6 flex gap-2">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'book_service' service.id %}" class="btn btn-primary" style="flex: 1;">Book Now</a>
+                {% else %}
+                    <a href="{% url 'login' %}?next={% url 'book_service' service.id %}" class="btn btn-primary" style="flex: 1;">Login to Book</a>
+                {% endif %}
+                <a href="https://wa.me/91{{ service.phone }}" target="_blank" class="btn btn-outline" style="padding: 0.6rem; color: #25D366 !important; border-color: #25D366;"><i class="fa-brands fa-whatsapp fa-lg"></i></a>
+            </div>
+        </div>
+        {% empty %}
+        <div style="grid-column: 1 / -1; text-align: center; padding: 4rem; color: var(--text-muted);" class="glass-card">
+            <i class="fa-solid fa-users-slash" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+            <h3>No services found</h3>
+            <p>We are currently onboarding more service providers.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

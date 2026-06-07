@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: nammaujire
+    runtime: python
+    plan: free
+    buildCommand: bash build.sh
+    startCommand: bash start.sh
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        value: "nammaujire.com,www.nammaujire.com,.onrender.com"
+      - key: CSRF_TRUSTED_ORIGINS
+        value: "https://nammaujire.com,https://www.nammaujire.com,https://*.onrender.com"
+      - key: SERVE_MEDIA
+        value: "True"
