@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}Import VN QR | Reel Editor{% endblock %}
+
+{% block content %}
+<section class="container editor-narrow">
+    <div class="glass-card">
+        <p class="section-eyebrow">VN QR</p>
+        <h1>{{ project.title }}</h1>
+        <form method="post" enctype="multipart/form-data" class="editor-form">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="form-group">
+                <label class="form-label" for="{{ form.qr_image.id_for_label }}">QR image</label>
+                {{ form.qr_image }}
+                {{ form.qr_image.errors }}
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="{{ form.decoded_text.id_for_label }}">Decoded QR payload</label>
+                {{ form.decoded_text }}
+                {{ form.decoded_text.errors }}
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="{{ form.template_notes.id_for_label }}">Notes</label>
+                {{ form.template_notes }}
+                {{ form.template_notes.errors }}
+            </div>
+            <div class="editor-actions">
+                <a href="{% url 'editor:project_detail' project.pk %}" class="btn btn-outline">Cancel</a>
+                <button type="submit" class="btn btn-primary">Save QR Reference</button>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const qrInput = document.getElementById('id_qr_image');
+    const decodedText = document.getElementById('id_decoded_text');
+
+    async function decodeQrImage(file) {
+        if (!('BarcodeDetector' in window) || !file || !decodedText) {
+            return;
+        }
+        try {
+            const detector = new BarcodeDetector({ formats: ['qr_code'] });
+            const bitmap = await createImageBitmap(file);
+            const codes = await detector.detect(bitmap);
+            if (codes.length && codes[0].rawValue) {
+                decodedText.value = codes[0].rawValue;
+            }
+        } catch (error) {
+            console.debug('QR decode unavailable', error);
+        }
+    }
+
+    if (qrInput) {
+        qrInput.addEventListener('change', (event) => {
+            decodeQrImage(event.target.files[0]);
+        });
+    }
+</script>
+{% endblock %}

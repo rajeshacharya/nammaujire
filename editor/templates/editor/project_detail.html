@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ project.title }} | Reel Editor{% endblock %}
+
+{% block content %}
+<section class="container editor-shell">
+    <div class="editor-header">
+        <div>
+            <p class="section-eyebrow">Reel Project</p>
+            <h1>{{ project.title }}</h1>
+            <p class="text-muted">{{ project.get_render_status_display }}{% if project.render_message %} · {{ project.render_message }}{% endif %}</p>
+        </div>
+        <div class="editor-actions">
+            <a href="{% url 'editor:upload_asset' project.pk %}" class="btn btn-outline"><i class="fa-solid fa-upload"></i> Upload</a>
+            <a href="{% url 'editor:import_qr' project.pk %}" class="btn btn-outline"><i class="fa-solid fa-qrcode"></i> VN QR</a>
+            {% if project.output_video %}
+                <a href="{% url 'editor:download_output' project.pk %}" class="btn btn-primary"><i class="fa-solid fa-download"></i> MP4</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="editor-workspace">
+        <section class="editor-panel">
+            <h2>Prompt</h2>
+            <form method="post" action="{% url 'editor:generate_plan' project.pk %}" class="editor-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="form-label" for="{{ prompt_form.prompt.id_for_label }}">Edit prompt</label>
+                    {{ prompt_form.prompt }}
+                    {{ prompt_form.prompt.errors }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="{{ prompt_form.target_duration.id_for_label }}">Duration seconds</label>
+                    {{ prompt_form.target_duration }}
+                    {{ prompt_form.target_duration.errors }}
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate Plan</button>
+            </form>
+        </section>
+
+        <section class="editor-phone-preview">
+            <div class="editor-phone-frame">
+                <div class="editor-phone-stage">
+                    {% if visual_clips %}
+                        <span class="editor-stage-label">{{ visual_clips.0.filename }}</span>
+                    {% else %}
+                        <span class="editor-stage-label">9:16 Reel Canvas</span>
+                    {% endif %}
+                </div>
+            </div>
+            <form method="post" action="{% url 'editor:render_project' project.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-secondary"><i class="fa-solid fa-clapperboard"></i> Render MP4</button>
+            </form>
+        </section>
+    </div>
+
+    <div class="editor-grid-2">
+        <section class="editor-panel">
+            <h2>Assets</h2>
+            {% if assets %}
+                <div class="editor-asset-list">
+                    {% for asset in assets %}
+                        <div class="editor-asset-row">
+                            <span><i class="fa-solid fa-file-video"></i> {{ asset.original_filename }}</span>
+                            <span>{{ asset.get_kind_display }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted">No assets uploaded.</p>
+            {% endif %}
+        </section>
+
+        <section class="editor-panel">
+            <h2>VN Template Reference</h2>
+            {% if project.template_payload %}
+                <p class="text-muted">{{ project.template_payload|truncatechars:220 }}</p>
+            {% else %}
+                <p class="text-muted">No VN QR/template reference attached.</p>
+            {% endif %}
+        </section>
+    </div>
+
+    <section class="editor-panel">
+        <div class="editor-panel-heading">
+            <h2>Timeline Plan</h2>
+            <span>{{ project.timeline.duration_seconds|default:project.target_duration }}s</span>
+        </div>
+
+        {% if visual_clips %}
+            <div class="editor-timeline">
+                {% for clip in visual_clips %}
+                    <div class="editor-timeline-clip">
+                        <strong>{{ clip.filename }}</strong>
+                        <span>{{ clip.start }}s - {{ clip.end }}s</span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-muted">Generate an edit plan after uploading media.</p>
+        {% endif %}
+
+        <details class="editor-json">
+            <summary>Plan JSON</summary>
+            <pre>{{ timeline_json }}</pre>
+        </details>
+    </section>
+</section>
+{% endblock %}

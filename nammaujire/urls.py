@@ -14,6 +14,7 @@ urlpatterns = [
     path('services/', include('services.urls')),
     path('ads/', include('ads.urls')),
     path('locations/', include('locations.urls')),
+    path('editor/', include('editor.urls')),
 ]
 
 if settings.DEBUG or getattr(settings, 'SERVE_MEDIA', False):

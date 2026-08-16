@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 import os
+import importlib.util
 from pathlib import Path
 
 from django.core.exceptions import ImproperlyConfigured
@@ -76,11 +77,13 @@ INSTALLED_APPS = [
     'ads',
     'core',
     'locations',
+    'editor',
 ]
+
+HAS_WHITENOISE = importlib.util.find_spec('whitenoise') is not None
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -88,6 +91,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+if HAS_WHITENOISE:
+    MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
 
 ROOT_URLCONF = 'nammaujire.urls'
 
@@ -169,12 +175,17 @@ STORAGES = {
         'BACKEND': 'django.core.files.storage.FileSystemStorage',
     },
     'staticfiles': {
-        'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage',
+        'BACKEND': (
+            'whitenoise.storage.CompressedStaticFilesStorage'
+            if HAS_WHITENOISE
+            else 'django.contrib.staticfiles.storage.StaticFilesStorage'
+        ),
     },
 }
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = Path(os.environ.get('MEDIA_ROOT', BASE_DIR / 'media'))
+EDITOR_MAX_UPLOAD_SIZE = int(os.environ.get('EDITOR_MAX_UPLOAD_SIZE', str(500 * 1024 * 1024)))
 
 SERVE_MEDIA = env_bool('SERVE_MEDIA', default=not DEBUG)
 
@@ -186,3 +197,6 @@ CSRF_COOKIE_SECURE = not DEBUG
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'dashboard'

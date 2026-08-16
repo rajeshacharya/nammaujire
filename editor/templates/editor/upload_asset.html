@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload Asset | Reel Editor{% endblock %}
+
+{% block content %}
+<section class="container editor-narrow">
+    <div class="glass-card">
+        <p class="section-eyebrow">Upload</p>
+        <h1>{{ project.title }}</h1>
+        <form method="post" enctype="multipart/form-data" class="editor-form">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="form-group">
+                <label class="form-label" for="{{ form.file.id_for_label }}">File</label>
+                {{ form.file }}
+                {{ form.file.errors }}
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="{{ form.kind.id_for_label }}">Asset type</label>
+                {{ form.kind }}
+                {{ form.kind.errors }}
+            </div>
+            <div class="editor-actions">
+                <a href="{% url 'editor:project_detail' project.pk %}" class="btn btn-outline">Cancel</a>
+                <button type="submit" class="btn btn-primary">Upload</button>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

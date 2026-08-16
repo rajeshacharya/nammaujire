@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Reel Editor | Namma Ujire{% endblock %}
+
+{% block content %}
+<section class="container editor-shell">
+    <div class="editor-header">
+        <div>
+            <p class="section-eyebrow">AI Reel Studio</p>
+            <h1>Create vertical reels</h1>
+            <p class="text-muted">Upload media, attach VN QR references, generate an edit plan, and export a 9:16 MP4.</p>
+        </div>
+        <a href="{% url 'editor:project_create' %}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> New Reel</a>
+    </div>
+
+    {% if projects %}
+        <div class="editor-project-grid">
+            {% for project in projects %}
+                <article class="editor-project-card">
+                    <div>
+                        <h2>{{ project.title }}</h2>
+                        <p class="text-muted">{{ project.prompt|default:"No prompt yet"|truncatechars:120 }}</p>
+                    </div>
+                    <div class="editor-meta-row">
+                        <span>{{ project.target_duration }}s</span>
+                        <span>{{ project.get_render_status_display }}</span>
+                    </div>
+                    <a href="{% url 'editor:project_detail' project.pk %}" class="btn btn-outline">Open</a>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="editor-empty glass-card">
+            <i class="fa-solid fa-film"></i>
+            <h2>No reel projects yet</h2>
+            <a href="{% url 'editor:project_create' %}" class="btn btn-primary">Create First Reel</a>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}
