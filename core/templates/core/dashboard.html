@@ -23,6 +23,18 @@
         {% endif %}
     </div>
 
+    <div class="glass-card mb-6">
+        <div class="flex items-center justify-between" style="gap: 1rem; flex-wrap: wrap;">
+            <div>
+                <h3 class="mb-2">AI Reel Editor</h3>
+                <p class="text-muted" style="margin: 0;">Create 9:16 reels, import VN QR references, generate an edit plan, and render an MP4.</p>
+            </div>
+            <a href="{% url 'editor:project_list' %}" class="btn btn-primary">
+                <i class="fa-solid fa-film"></i> Open Reel Editor
+            </a>
+        </div>
+    </div>
+
     <div class="glass-card">
         <h3 class="mb-4">{% if is_provider %}Incoming Booking Requests{% else %}Your Bookings{% endif %}</h3>
         
